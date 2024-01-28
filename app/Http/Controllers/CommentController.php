@@ -8,10 +8,23 @@ use Illuminate\Http\Request;
 class CommentController extends Controller
 {
     public function store(Request $request, Post $post){
-        $request->validate(['text' => ['required']]);
+        $request->validate(['text' => ['required'], 'comment_id' => ['nullable', 'numeric']]);
 
-        $comment = $post->comments()->create(['text' => $request->text, 'user_id' => $request->user()->id]);
+        $comment = $post->comments()->create([
+            'text' => $request->text,
+            'user_id' => $request->user()->id,
+            'comment_id' => $request->comment_id ?? null
+        ]);
 
-        return $comment->load('user');
+        $comment->load(['user']);
+
+        $comment = collect($comment);
+        $comment['replies'] = [];
+        $comment['reactions'] = [];
+        $comment['reacted'] = null;
+        $comment['reactions_count'] = 0;
+        $comment['replies_count'] = 0;
+
+        return $comment;
     }
 }

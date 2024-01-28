@@ -4,17 +4,32 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PostStoreRequest;
 use App\Models\Post;
+use App\Models\Reaction;
+use App\Repositories\PostRepository;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
+
+    private $postRepository;
+
+    public function __construct()
+    {
+        $this->postRepository = new PostRepository();
+    }
+
     public function index(Request $request){
-        return Post::with(['user', 'comment.user'])->get();
+        return $this->postRepository->getAll();
     }
 
     public function store(PostStoreRequest $request){
         $post = Post::create([...$request->only(['text', 'privacy']), 'user_id' => $request->user()->id]);
-
-        return $post->load(['user']);
+        $post->load(['user', 'reactions', 'reacted']);
+        $post = collect($post);
+        $post['comments'] = [];
+        $post['comments_count'] = 0;
+        $post['reactions_count'] = 0;
+        return $post;
     }
+
 }

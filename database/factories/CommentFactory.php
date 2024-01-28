@@ -2,6 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\Comment;
+use App\Models\Reply;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -9,15 +12,25 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class CommentFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+
+    // public function configure()
+    // {
+    //     return $this->afterCreating(function(Comment $comment){
+    //         Comment::factory()->count(25)->create([
+    //             'comment_id' => $comment->id,
+    //             'post_id' => $comment->post_id,
+    //         ]) ;
+    //     });
+    // }
+
     public function definition(): array
     {
+
+        $users = User::limit(100)->get();
+
         return [
-            //
+            'text' => $this->faker->paragraph(),
+            'user_id' => $this->faker->randomElement($users->map(fn($user) => $user->id)),
         ];
     }
 }

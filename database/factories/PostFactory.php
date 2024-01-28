@@ -2,6 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\Comment;
+use App\Models\Post;
+use Closure;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -9,15 +12,22 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class PostFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+
+    public function configure()
+    {
+        return $this->afterCreating(function(Post $post){
+            Comment::factory()->count(25)->create([
+                'post_id' => $post->id
+            ]);
+        });
+    }
+
+
     public function definition(): array
     {
         return [
-            //
+            'text' => $this->faker->paragraph(),
+            'privacy' => $this->faker->randomElement(['public', 'private', 'connected']),
         ];
     }
 }
