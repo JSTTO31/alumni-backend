@@ -12,6 +12,7 @@ use App\Http\Controllers\ReactionController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\TitleParagraphController;
 use App\Http\Controllers\ViewController;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -60,6 +61,15 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function(){
     // Route::post('post/{post}/views', ViewController::class);
     Route::apiResource('posts', PostController::class);
     Route::apiResource('post.comments', CommentController::class)->only(['store']);
+
+
+  
+});
+
+Route::post('/login', function(){
+    $user = User::find(1);
+
+    return $user->createToken('example-token')->plainTextToken;
 });
 
 

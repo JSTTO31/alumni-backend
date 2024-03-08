@@ -16,7 +16,6 @@ class CommentController extends Controller
             'comment_id' => $request->comment_id ?? null
         ]);
 
-        $comment->load(['user']);
 
         $comment = collect($comment);
         $comment['replies'] = [];
@@ -24,6 +23,8 @@ class CommentController extends Controller
         $comment['reacted'] = null;
         $comment['reactions_count'] = 0;
         $comment['replies_count'] = 0;
+        $comment['user'] = $request->user();    
+
 
         return $comment;
     }

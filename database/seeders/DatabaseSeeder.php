@@ -27,11 +27,11 @@ class DatabaseSeeder extends Seeder
         // \App\Models\User::factory(500)->create();
         // \App\Models\User::factory(1)->create();
 
-        User::limit(5)->get()->each(function(User $user){
-            Post::factory()->has(Comment::factory()->count(5))->count(10)->create([
-                'user_id' => $user->id,
-            ]);
-        });
+        // User::limit(5)->get()->each(function(User $user){
+        //     Post::factory()->has(Comment::factory()->count(5))->count(10)->create([
+        //         'user_id' => $user->id,
+        //     ]);
+        // });
 
         // View::truncate();
         // $randomUsers =  User::orderBy(DB::raw('RAND()'))->limit(77)->get();
@@ -66,5 +66,13 @@ class DatabaseSeeder extends Seeder
 
         //   });
         // });
+
+
+        // User::find(1)->update([
+        //     'password' => Hash::make("joshuasotto")
+        // ]);
+
+
+        View::where('type', 'App\Models\Post')->delete();
     }
 }

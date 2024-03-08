@@ -22,6 +22,18 @@ class PostController extends Controller
         return $this->postRepository->getAll();
     }
 
+    public function show(Request $request, Post $post){
+
+        $post->load([
+            'user',
+            'comment' => function($query){
+                $query->with(['replies', 'user', 'reactions', 'reacted'])->withCount(['replies', 'reactions']);
+            }, 'reactions', 'reacted', 'comments' => fn($query) => $query->with(['user', 'replies.user'])]
+        );
+
+        return $post;
+    }
+
     public function store(PostStoreRequest $request){
         $post = Post::create([...$request->only(['text', 'privacy']), 'user_id' => $request->user()->id]);
         $post->load(['user', 'reactions', 'reacted']);
@@ -29,6 +41,7 @@ class PostController extends Controller
         $post['comments'] = [];
         $post['comments_count'] = 0;
         $post['reactions_count'] = 0;
+        
         return $post;
     }
 
