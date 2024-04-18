@@ -73,6 +73,10 @@ class DatabaseSeeder extends Seeder
         // ]);
 
 
-        View::where('type', 'App\Models\Post')->delete();
+        // View::where('type', 'App\Models\Post')->delete();
+        // Student::create();
+        $students = Student::all();
+
+        dd($students);
     }
 }

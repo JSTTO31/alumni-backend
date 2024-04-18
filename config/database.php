@@ -69,7 +69,7 @@ return [
             'host' => env('AU_DB_HOST', '127.0.0.1'),
             'port' => env('AU_DB_PORT', '3306'),
             'database' => env('AU_DB_DATABASE', 'forge'),
-            'username' => env('AU_DB_USERNAME', 'forge'),
+        'username' => env('AU_DB_USERNAME', 'forge'),
             'password' => env('AU_DB_PASSWORD', ''),
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => 'utf8mb4',
