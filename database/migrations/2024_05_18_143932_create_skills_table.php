@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('request_connections', function (Blueprint $table) {
+        Schema::create('skills', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id');
-            $table->foreignId('request_to');
-            $table->date('requested_at');
-            $table->date('request_accepted_at')->nullable();
+            $table->foreignId("user_id");
+            $table->string("name");
+            $table->integer("years");
+            $table->string("certification")->nullable();
+            $table->integer("proficiency")->default(1);
+            $table->boolean("pinned")->default(false);
             $table->timestamps();
         });
     }
@@ -26,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('request_connections');
+        Schema::dropIfExists('skills');
     }
 };

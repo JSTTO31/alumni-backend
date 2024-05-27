@@ -1,7 +1,7 @@
 <?php
 
 namespace Database\Seeders;
-
+use Shuchkin\SimpleXLSX;
 use App\Models\Comment;
 use App\Models\Connection;
 use App\Models\Department;
@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Hash;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -39,30 +40,30 @@ class DatabaseSeeder extends Seeder
         // User::orderBy(DB::raw('RAND()'))->limit(77)->get()->each(function(User $user) use ($randomUsers){
 
         //   $randomUsers->each(function(User $user2) use($user){
-        //     if($user->id != $user2->id){
-        //         RequestConnection::create([
-        //             'user_id' => $user->id,
-        //             'request_to' => $user2->id,
-        //             'requested_at' => now(),
-        //             'request_accepted_at' => now(),
-        //         ]);
-        //         DB::table('connections')->insert([
-        //             [
-        //                 'user_id' => $user->id,
-        //                 'connected_to' => $user2->id,
-        //             ],
-        //             [
-        //                 'user_id' => $user2->id,
-        //                 'connected_to' => $user->id,
-        //             ]
-        //         ]);
-        //     }
+        //     // if($user->id != $user2->id){
+        //     //     RequestConnection::create([
+        //     //         'user_id' => $user->id,
+        //     //         'request_to' => $user2->id,
+        //     //         'requested_at' => now(),
+        //     //         'request_accepted_at' => now(),
+        //     //     ]);
+        //     //     DB::table('connections')->insert([
+        //     //         [
+        //     //             'user_id' => $user->id,
+        //     //             'connected_to' => $user2->id,
+        //     //         ],
+        //     //         [
+        //     //             'user_id' => $user2->id,
+        //     //             'connected_to' => $user->id,
+        //     //         ]
+        //     //     ]);
+        //     // }
 
-        //     // View::create([
-        //     //     'user_id' => $user->id,
-        //     //     'viewable_id' => 1,
-        //     //     'type' => User::class,
-        //     // ]);
+        //     View::create([
+        //         'user_id' => $user->id,
+        //         'viewable_id' => 1,
+        //         'type' => User::class,
+        //     ]);
 
         //   });
         // });
@@ -75,8 +76,32 @@ class DatabaseSeeder extends Seeder
 
         // View::where('type', 'App\Models\Post')->delete();
         // Student::create();
-        $students = Student::all();
+        
+        // User::where('id', '!=', 1)->delete();
 
-        dd($students);
+        $xls = SimpleXLSX::parse((__DIR__ . '/names.xlsx'));
+
+        
+        $departments = collect(Department::all())->toArray();
+
+        // $data = $xls->rows();
+
+        // $students = collect($data)->map(function($item, $index) use($departments){
+            
+        //     $department = collect($departments)->first(fn($item) => $item['name'] == Str::of($item[1])->headline()->value());
+        //     $year = explode($item[2]);
+        //     return [
+        //         'department_id' => $department['id'],
+        //         'student_number' => 
+        //         'name' => 
+        //         'email'
+        //     ];
+        // });
+
+
+        // $user = User::where('email', 'joshuasotto@example.example')->first();
+        // $user->password = Hash::make('joshuasotto');
+        // $user->save();
+
     }
 }

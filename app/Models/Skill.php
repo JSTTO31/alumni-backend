@@ -5,14 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Department extends Model
+class Skill extends Model
 {
     use HasFactory;
+    protected $guarded = ['id'];
 
-    protected $guarded = [];
-
-    public function students(){
-        return $this->hasMany(Student::class);
-    }
-
+    protected $casts = [
+        'pinned' => 'boolean'
+    ];
 }

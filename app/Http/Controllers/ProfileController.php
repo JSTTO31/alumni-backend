@@ -10,7 +10,7 @@ class ProfileController extends Controller
     public function __invoke(Request $request, User $user)
     {
         $user->addView($request->user());
-        $user->load(['about', 'alumni_information', 'informations']);
+        $user->load(['about', 'alumni_information', 'informations', 'personal_information', 'contact_information', 'works', 'work', 'skills', 'educations', 'certifications', 'images', 'links']);
         $user->loadCount(['viewers']);
 
         $connection_count = $user->connectionsCount();
@@ -33,6 +33,8 @@ class ProfileController extends Controller
         $user['connections_count'] = $connection_count;
         $user['viewers'] = $viewers;
         $user['batchmates'] = $batchmates;
+
+        
         return $user;
 
     }
