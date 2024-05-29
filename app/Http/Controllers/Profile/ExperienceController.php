@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Profile;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\ExperienceStoreRequest;
 use App\Models\Experience;
 use Carbon\Carbon;
@@ -9,7 +10,6 @@ use Illuminate\Http\Request;
 
 class ExperienceController extends Controller
 {
-
     public function index(Request $request){
         return Experience::where('user_id', $request->user()->id)->get();
     }

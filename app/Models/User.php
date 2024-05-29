@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Traits\Connection;
 use App\Traits\Viewable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -47,6 +48,19 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    protected $appends = [
+        'picture'
+    ];
+
+    public function profile_picture(){
+        return $this->morphOne(Image::class, 'imageable')->where('type', 'profile');
+    }
+
+    public function getPictureAttribute(){
+        $picture = $this->profile_picture()->location ?? '/profiles/dummy-profile.png';
+        return request()->getSchemeAndHttpHost() . "/storage" . $picture;
+    }
 
     public function about(){
         return $this->hasOne(About::class);
@@ -91,6 +105,7 @@ class User extends Authenticatable
     public function images(){
         return $this->morphMany(Image::class, 'imageable')->where('type', 'portfolio');
     }
+
 
     public function links(){
         return $this->hasMany(Link::class);
