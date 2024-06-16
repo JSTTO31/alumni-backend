@@ -5,6 +5,7 @@ use Shuchkin\SimpleXLSX;
 use App\Models\Comment;
 use App\Models\Connection;
 use App\Models\Department;
+use App\Models\Nationality;
 use App\Models\Post;
 use App\Models\RequestConnection;
 use App\Models\Student;
@@ -54,7 +55,7 @@ class DatabaseSeeder extends Seeder
         //     //         ],
         //     //         [
         //     //             'user_id' => $user2->id,
-        //     //             'connected_to' => $user->id,
+        //     //             'connected_to' => $user->id
         //     //         ]
         //     //     ]);
         //     // }
@@ -76,24 +77,24 @@ class DatabaseSeeder extends Seeder
 
         // View::where('type', 'App\Models\Post')->delete();
         // Student::create();
-        
+
         // User::where('id', '!=', 1)->delete();
 
-        $xls = SimpleXLSX::parse((__DIR__ . '/names.xlsx'));
+        // $xls = SimpleXLSX::parse((__DIR__ . '/names.xlsx'));
 
-        
-        $departments = collect(Department::all())->toArray();
+
+        // $departments = collect(Department::all())->toArray();
 
         // $data = $xls->rows();
 
         // $students = collect($data)->map(function($item, $index) use($departments){
-            
+
         //     $department = collect($departments)->first(fn($item) => $item['name'] == Str::of($item[1])->headline()->value());
         //     $year = explode($item[2]);
         //     return [
         //         'department_id' => $department['id'],
-        //         'student_number' => 
-        //         'name' => 
+        //         'student_number' =>
+        //         'name' =>
         //         'email'
         //     ];
         // });
@@ -102,6 +103,27 @@ class DatabaseSeeder extends Seeder
         // $user = User::where('email', 'joshuasotto@example.example')->first();
         // $user->password = Hash::make('joshuasotto');
         // $user->save();
+
+        // User::all()->each(function($user){
+        //     $user->name = fake()->name();
+        //     $user->save();
+        // });
+
+        $arellanoUniversityBranches = [
+            "Legarda Campus",
+            "Juan Sumulong Campus",
+            "Apolinario Mabini Campus",
+            "Andres Bonifacio Campus",
+            "Jose Rizal Campus",
+            "Elisa Esguerra Campus",
+            "Plaridel Campus",
+            "Florentino Cayco Memorial School"
+          ];
+
+
+          foreach($arellanoUniversityBranches as $arrelano){
+            DB::table('school_branches')->insert(['name' => $arrelano]);
+          }
 
     }
 }

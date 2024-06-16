@@ -3,13 +3,12 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RegisterUserRequest;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
 
 class RegisteredUserController extends Controller
 {
@@ -18,22 +17,27 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): Response
+    public function store(RegisterUserRequest $request): Response
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'student_number' => ['required']
-        ]);
+        DB::beginTransaction();
 
-        $user = User::create([
-            'id' => 100,
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        try {
 
+            $user = User::create([
+                'name' => $request->account['name'],
+                'email' => $request->account['email'],
+                'password' => Hash::make($request->account['password']),
+            ]);
+
+            $user->personal_information()->create($request->personal);
+            $user->contact_information()->create($request->contact);
+
+            DB::commit();
+
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
 
         Auth::login($user);
 

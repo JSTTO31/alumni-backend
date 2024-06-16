@@ -1,5 +1,7 @@
 <?php
 
+use App\Mail\EmailVerificationMail;
+use App\Mail\Verification\EmailOtp;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,6 +17,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return ['Laravel' => app()->version()];
+});
+
+Route::get('/email', function(){
+    return new EmailVerificationMail();
 });
 
 require __DIR__.'/auth.php';

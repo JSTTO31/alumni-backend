@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Profile;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PictureRequest;
 use App\Models\Image;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -13,23 +14,27 @@ class PictureController extends Controller
 {
     public function __invoke(Request $request)
     {
-        $request->validate([
-            'styles.scale' => ['required', 'integer'],
-            'selected_frame' => ['required', 'integer'],
+        $request->merge([
+            'styles' => json_decode($request->styles, true)
         ]);
 
-        $picture = Image::where('imageable_id', $request->user()->id)->where('imageable_type', User::class)->where('type', 'profile')->first();
+        $request->validate([
+            'styles.scale' => ['required'],
+            'selected_frame' => ['required'],
+        ]);
 
+        $picture = $request->user()->profile_picture;
         $new = false; // if first time of editing profile
 
         if(!$picture){ // Determine if exists
             $new = true;
             $picture = new Image();
-            $picture->data = json_encode($request->only(['styles', 'selected_frame']));
             $picture->type = 'profile';
             $picture->imageable_type = 'App\Models\User';
             $picture->imageable_id = $request->user()->id;
         }
+
+        $picture->data = json_encode($request->only(['styles', 'selected_frame']));
 
         if($request->hasFile('image') || $new){
             $request->validate([
@@ -45,6 +50,12 @@ class PictureController extends Controller
 
         $picture->save();
 
-        return $picture;
+        $picture = collect($picture);
+        $picture['data'] = $request->only(['styles', 'selected_frame']);
+
+        return  [
+            'picture' => $request->getSchemeAndHttpHost() . "/storage/" . $picture['location'],
+            'profile_picture' => $picture,
+        ];
     }
 }

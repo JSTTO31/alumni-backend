@@ -1,11 +1,15 @@
 <?php
 
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ConnectionController;
+use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\PeopleController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ReactionController;
+use App\Http\Controllers\SchoolBranchesController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ViewController;
 use App\Models\User;
@@ -17,6 +21,7 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function(){
     Route::get('user', function(Request $request){
         return $request->user();
     });
+
     Route::controller(ReactionController::class)->group(function(){
         Route::post('reaction/add', 'add_reaction');
         Route::post('reaction/remove', 'remove_reaction');
@@ -38,6 +43,8 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function(){
     });
 
     Route::get('/search', SearchController::class);
+    Route::get('/departments', [DepartmentController::class, 'index']);
+    Route::get('/school_branches', [SchoolBranchesController::class, 'index']);
 
     Route::controller(ViewController::class)->group(function(){
         Route::post('/view/profile/{user}', 'profile');
@@ -47,6 +54,12 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function(){
     // Route::post('post/{post}/views', ViewController::class);
     Route::apiResource('posts', PostController::class);
     Route::apiResource('post.comments', CommentController::class)->only(['store']);
+
+
+    Route::controller(EmailVerificationController::class)->group(function () {
+        Route::post('/email/verification/send', 'sendVerification');
+        Route::post('/email/verification/verify', 'verify');
+    });
 });
 
 
@@ -56,6 +69,8 @@ Route::post('/login', function(){
     $user = User::find(1);
     return $user->createToken('example-token')->plainTextToken;
 });
+
+Route::post('/register', [RegisteredUserController::class, 'store']);
 
 
 

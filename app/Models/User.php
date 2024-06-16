@@ -5,9 +5,11 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Traits\Connection;
+use App\Traits\Profile;
 use App\Traits\Viewable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -16,7 +18,7 @@ use Overtrue\LaravelFollow\Traits\Follower;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, Follower, Followable, Connection, Viewable;
+    use HasApiTokens, HasFactory, Notifiable, Follower, Followable, Connection, Viewable, Profile;
 
     /**
      * The attributes that are mass assignable.
@@ -37,6 +39,8 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'profile_picture_relationship',
+        'profile_cover_relationship'
     ];
 
     /**
@@ -50,64 +54,60 @@ class User extends Authenticatable
     ];
 
     protected $appends = [
-        'picture'
+        'picture',
+        'profile_picture',
+        'profile_cover',
+        'cover'
     ];
 
-    public function profile_picture(){
+    protected $with = [
+        'general_information',
+    ];
+
+    public function profile_picture_relationship() : MorphOne{
         return $this->morphOne(Image::class, 'imageable')->where('type', 'profile');
     }
 
+    public function profile_cover_relationship() : MorphOne{
+        return $this->morphOne(Image::class, 'imageable')->where('type', 'cover');
+    }
+
     public function getPictureAttribute(){
-        $picture = $this->profile_picture()->location ?? '/profiles/dummy-profile.png';
-        return request()->getSchemeAndHttpHost() . "/storage" . $picture;
+        $picture = $this->profile_picture_relationship->location ?? '/profiles/dummy-profile.png';
+        return request()->getSchemeAndHttpHost() . "/storage/" . $picture;
     }
 
-    public function about(){
-        return $this->hasOne(About::class);
+    public function getProfilePictureAttribute() {
+        if(!$this->profile_picture_relationship){
+            return null;
+        }
+        if(is_string($this->profile_picture_relationship->data)){
+            $this->profile_picture_relationship->data = json_decode($this->profile_picture_relationship->data);
+        }
+        return $this->profile_picture_relationship;
     }
 
-    public function informations(){
-        return $this->hasMany(information::class);
+    public function getCoverAttribute(){
+        if(!$this->profile_cover_relationship){
+            return null;
+        }
+        return request()->getSchemeAndHttpHost() . "/storage/" . $this->profile_cover_relationship->location;
     }
 
-    public function alumni_information(){
-        return $this->hasOne(Student::class, 'email', 'email')->with('department');
+    public function getProfileCoverAttribute() {
+        if(!$this->profile_cover_relationship){
+            return null;
+        }
+        if(is_string($this->profile_cover_relationship->data)){
+            $this->profile_cover_relationship->data = json_decode($this->profile_cover_relationship->data);
+        }
+
+        return $this->profile_cover_relationship;
     }
 
-    public function personal_information(){
-        return $this->hasOne(PersonalInformation::class);
-    }
-
-    public function contact_information(){
-        return $this->hasOne(ContactInformation::class);
-    }
-
-    public function work(){
-        return $this->hasOne(Work::class)->where('current', true);
-    }
-
-    public function works(){
-        return $this->hasMany(Work::class);
-    }
-
-    public function skills(){
-        return $this->hasMany(Skill::class);
-    }
-
-    public function educations(){
-        return $this->hasMany(Education::class);
-    }
-
-    public function certifications(){
-        return $this->hasMany(Certification::class);
-    }
-
-    public function images(){
-        return $this->morphMany(Image::class, 'imageable')->where('type', 'portfolio');
+    public function otp(){
+        return $this->hasOne(OTP::class);
     }
 
 
-    public function links(){
-        return $this->hasMany(Link::class);
-    }
 }
