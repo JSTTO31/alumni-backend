@@ -7,6 +7,7 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EmailVerificationController;
 use App\Http\Controllers\FollowController;
 use App\Http\Controllers\PeopleController;
+use App\Http\Controllers\PersonRemoveController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ReactionController;
 use App\Http\Controllers\SchoolBranchesController;
@@ -34,11 +35,13 @@ Route::middleware(['auth:sanctum', 'verified'])->group(function(){
         Route::post('/user/{user}/connections/disconnect', 'disconnect');
         Route::post('/user/{user}/connections/confirm', 'confirm');
         Route::get('/{user:email}/connections', 'connections');
-        Route::get('/{user:email}/connection-requests', 'connection_requests');
+        Route::get('connection-requests', 'connection_requests');
     });
 
+    Route::delete('/{user:email}/removes', PersonRemoveController::class);
+
     Route::controller(PeopleController::class)->group(function(){
-        Route::get('/{user:email}/people-you-may-know', 'people_you_may_know');
+        Route::get('/people-you-may-know', 'people_you_may_know');
         Route::get('/{user:email}/batchmates', 'batchmates');
     });
 

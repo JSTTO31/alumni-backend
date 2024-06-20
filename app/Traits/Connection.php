@@ -29,15 +29,20 @@ Trait Connection
     }
 
     public function acceptConnection(User $user){
-
-        DB::table('connections')->insert([
+        ModelsConnection::insert([
             [
                 'user_id' => $user->id,
                 'connected_to' => $this->id,
+                'created_at' => now(),
+                'updated_at' => now(),
+
             ],
             [
                 'user_id' => $this->id,
                 'connected_to' => $user->id,
+                'created_at' => now(),
+                'updated_at' => now(),
+
             ]
         ]);
 
@@ -52,7 +57,7 @@ Trait Connection
 
     public function disconnect(User $user){
         $in = [$user->id, $this->id];
-        return RequestConnection::whereIn('user_id', $in)->whereIn('request_to', $in)->delete();
+        return RequestConnection::whereIn('request_to', $in)->delete();
     }
 
     public function isConnected(User $user){
@@ -86,7 +91,6 @@ Trait Connection
     public function attachConnectionStatus($users){
 
         if($users instanceof User){
-
             return $this->attachStatus($users);
         }
 

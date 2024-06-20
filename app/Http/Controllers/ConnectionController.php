@@ -32,19 +32,29 @@ class ConnectionController extends Controller
     }
 
     public function connections(Request $request, User $user){
-        $limit = $request->limit ?? 5;
+        $limit = $request->limit ?? 6;
         $users = User::whereHas('connections', function($query) use ($user){
             $query->where('connected_to', $user->id);
         })->where('name', 'LIKE', '%'. $request->search . '%')->cursorPaginate($limit);
-
-        return $users;
+        $count = User::whereHas('connections', fn($query) => $query->where('connected_to', $user->id))
+        ->whereDoesntHave('has_removes', fn($query) => $query->where('user_id', $user->id))->count();
+        $options = collect($users);
+        $users = $request->user()->attachConnectionStatus($users->items());
+        unset($options['data']);
+        return ['options' => [...$options, 'count' => $count], 'users' => $users];
     }
 
-    public function connection_requests(Request $request, User $user){
-        $limit = $request->limit ?? 5;
-        $users = User::whereHas('request_connections', fn($query) => $query->where('request_to', $user->id)->whereNull('request_accepted_at'))->where('name', 'LIKE', '%'. $request->search . '%')->cursorPaginate($limit);
-        $options = $users;
+    public function connection_requests(Request $request){
+        $user = $request->user();
+        $limit = $request->limit ?? 6;
+        $users = User::whereHas('request_connections', fn($query) => $query->where('request_to', $user->id)->whereNull('request_accepted_at'))
+        ->whereDoesntHave('has_removes', fn($query) => $query->where('user_id', $user->id))
+        ->cursorPaginate($limit);
+        $count = User::whereHas('request_connections', fn($query) => $query->where('request_to', $user->id)->whereNull('request_accepted_at'))
+        ->whereDoesntHave('has_removes', fn($query) => $query->where('user_id', $user->id))->count();
+        $options = collect($users);
         $users = $request->user()->attachConnectionStatus($users->items());
-        return [...collect($options), 'data' => $users];
+        unset($options['data']);
+        return ['options' => [...$options, 'count' => $count], 'users' => $users];
     }
 }

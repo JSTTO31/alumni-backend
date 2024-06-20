@@ -19,7 +19,7 @@ class PostController extends Controller
     }
 
     public function index(Request $request){
-        return $this->postRepository->getAll();
+    return $this->postRepository->getAll();
     }
 
     public function show(Request $request, Post $post){
@@ -41,7 +41,7 @@ class PostController extends Controller
         $post['comments'] = [];
         $post['comments_count'] = 0;
         $post['reactions_count'] = 0;
-        
+
         return $post;
     }
 

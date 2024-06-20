@@ -109,5 +109,11 @@ class User extends Authenticatable
         return $this->hasOne(OTP::class);
     }
 
+    public function person_removes(){
+        return $this->hasMany(PersonRemove::class, 'user_id');
+    }
 
+    public function has_removes(){
+        return $this->hasMany(PersonRemove::class, 'remove_id');
+    }
 }
