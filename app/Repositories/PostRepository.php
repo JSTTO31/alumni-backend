@@ -17,7 +17,6 @@ class PostRepository
                     }, 'reactions', 'reacted'])
                 ->whereDoesntHave('views', fn($query) => $query->where('user_id', $request->user()->id))
                 ->withCount(['comments', 'reactions'])
-                ->orderByDesc(DB::raw('comments_count + reactions_count + views'))
                 ->take(5)
                 ->get()
                 ->map(function($data){

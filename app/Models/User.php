@@ -116,4 +116,16 @@ class User extends Authenticatable
     public function has_removes(){
         return $this->hasMany(PersonRemove::class, 'remove_id');
     }
+
+    public function posts(){
+        return $this->hasMany(Post::class);
+    }
+
+    public function post_saves(){
+        return $this->hasMany(Save::class)->where('saveable_type', Post::class);
+    }
+
+    public function comments(){
+        return $this->hasMany(Comment::class);
+    }
 }

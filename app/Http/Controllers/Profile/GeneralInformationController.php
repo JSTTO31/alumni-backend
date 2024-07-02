@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Profile;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\GeneralInformationRequest;
 use Illuminate\Http\Request;
 
-class ProfileGeneralInformationController extends Controller
+class GeneralInformationController extends Controller
 {
     public function store(GeneralInformationRequest $request){
         $general_information = $request->user()->general_information()->updateOrCreate($request->only([

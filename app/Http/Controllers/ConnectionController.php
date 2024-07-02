@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Connection;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -36,8 +37,7 @@ class ConnectionController extends Controller
         $users = User::whereHas('connections', function($query) use ($user){
             $query->where('connected_to', $user->id);
         })->where('name', 'LIKE', '%'. $request->search . '%')->cursorPaginate($limit);
-        $count = User::whereHas('connections', fn($query) => $query->where('connected_to', $user->id))
-        ->whereDoesntHave('has_removes', fn($query) => $query->where('user_id', $user->id))->count();
+        $count = Connection::where('connected_to', $request->user()->id)->count();
         $options = collect($users);
         $users = $request->user()->attachConnectionStatus($users->items());
         unset($options['data']);
